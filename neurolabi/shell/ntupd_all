@@ -1,0 +1,23 @@
+#!/bin/bash
+
+namelist=""
+while read line
+do
+  #echo $line
+  name=`echo $line | awk '{$1=$1};1'`
+  if [ ! -z $name ]
+  then
+    if [ ${name:0:1} != "#" ]
+    then
+      #echo $name
+      namelist="$namelist $name"
+      #ssh $name "$cmd_dir/ntconfig $src_neutu /opt/Download/neutube"
+    fi
+  fi
+done < machine.txt
+echo $namelist
+for name in $namelist
+do
+  echo $name
+  ssh $name "/opt/bin/ntupd"
+done

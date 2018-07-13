@@ -1,0 +1,69 @@
+#!/bin/bash
+
+if [ $# -ge 1 ]
+then
+  install_dir=$1
+else
+  install_dir=/opt
+fi
+
+if [ `uname` = 'Darwin' ]; then
+  scriptDir=$(cd $(dirname "$0") && pwd -P)
+else
+  scriptDir=$(dirname `readlink -f "$0"`)
+fi
+
+echo $PATH
+
+downloadDir=$install_dir/Download
+cd $downloadDir
+condaDir=$install_dir/Download/miniconda
+if [ ! -d $condaDir ]
+then
+  if [ `uname` = 'Darwin' ]
+  then
+    curl -O https://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh
+    bash Miniconda-latest-MacOSX-x86_64.sh -b -p $condaDir
+  else
+    wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
+    bash Miniconda-latest-Linux-x86_64.sh -b -p $condaDir
+  fi
+fi
+
+CONDA_ROOT=`$condaDir/bin/conda info --root`
+envDir=$condaDir/envs/dvidenv
+if [ ! -d $envDir ]
+then
+  source ${CONDA_ROOT}/bin/activate root
+  { echo y; } | $condaDir/bin/conda create -n dvidenv -c flyem libdvid-cpp
+fi
+
+#install lowtis
+if [ -d $install_dir/use_lowtis ]
+then
+  source $scriptDir/flyem_utilities.sh
+  flyem_build_lowtis $install_dir $scriptDir
+fi
+
+if [ `uname` != 'Darwin' ]
+then
+  GCCVER=$(gcc --version | grep ^gcc | sed 's/^.* //g')
+  if [ $GCCVER \> '4.9.0' ]
+  then
+    if [ ! -f $condaDir/envs/dvidenv/bin/gcc ]
+    then
+      source ${CONDA_ROOT}/bin/activate dvidenv
+      $condaDir/bin/conda install -c https://conda.anaconda.org/cgat gcc -y
+    fi
+  fi
+
+  if [ $GCCVER \< '4.8.0' ]
+  then
+    if [ ! -f $condaDir/envs/dvidenv/bin/gcc ]
+    then
+      source ${CONDA_ROOT}/bin/activate dvidenv
+      $condaDir/bin/conda install -c https://conda.anaconda.org/cgat gcc -y
+    fi
+  fi
+fi
+
