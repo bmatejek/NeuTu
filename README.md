@@ -7,7 +7,7 @@ Software for proofreading EM connectomics
 
 ## Download Source Code (Not needed for installation)
 
-    git clone -b flyem_release git@github.com:bmatejek525/NeuTu.git
+    git clone git@github.com:bmatejek525/NeuTu.git
 
 Also need Qt4.8.5 installed.
 
