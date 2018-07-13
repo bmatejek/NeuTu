@@ -1,10 +1,10 @@
 #CMake file for skeletonize src
 cmake_minimum_required(VERSION 3.5)
 
-set(QT_DIR /opt/Trolltech/Qt4.8.5)
-set(Neuroproof_minimalDir /home/brian/software/Neuroproof_minimal)
+set(QT_DIR /opt/Qt4.8.5)
+set(Neuroproof_minimalDir /home/bmatejek/software/Neuroproof_minimal)
 SET(Neuroproof_minimalBuildDir ${Neuroproof_minimalDir}/build)
-SET(minicondaDir /home/brian/software/miniconda2/envs/neuroproof_env/lib)
+SET(minicondaDir /home/bmatejek/software/miniconda2/envs/neuroproof_env/lib)
 
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG_")
 SET(NeurolabiDir ../neurolabi)
@@ -13,12 +13,12 @@ SET(NeurolabiLibDir ${NeurolabiDir}/c/lib)
 SET(NeutubeLibDir ${NeurolabiDir}/cpp/lib/build)
 SET(EXTLIB_DIR ${NeurolabiDir}/lib)
 
+  
 #SET(jsonLib jansson)
 set(CMAKE_PREFIX_PATH ${EXTLIB_DIR}/jansson)
 find_library(jsonLib LIBRARY NAMES jansson)
 
 set(CMAKE_PREFIX_PATH ${minicondaDir}/..)
-set(CMAKE_PREFIX_PATH ${QT_DIR}/lib)
 set(CMAKE_PREFIX_PATH ${minicondaDir})
 
 set(CMAKE_PREFIX_PATH ${EXTLIB_DIR}/fftw3)
@@ -35,6 +35,7 @@ find_library(neuLib LIBRARY NAMES neurolabi)
 set(CMAKE_PREFIX_PATH ${NeutubeLibDir})
 find_library(neutubeLib LIBRARY NAMES neutube)
 set(CMAKE_PREFIX_PATH ${Neuroproof_minimalBuildDir})
+MESSAGE(STATUS "${Neuroproof_minimalBuildDir}")
 find_library(neuroproofLib LIBRARY NAMES Neuroproof)
 set(CMAKE_PREFIX_PATH ${minicondaDir})
 find_library(boost_systemLib LIBRARY NAMES boost_system)
@@ -48,6 +49,7 @@ find_library(hdf5_hlLib LIBRARY NAMES hdf5_hl)
 
 find_library(zLib LIBRARY NAMES z)
 find_library(dlLib LIBRARY NAMES dl)
+set(CMAKE_PREFIX_PATH ${QT_DIR}/lib)
 find_library(QtCLuceneLib LIBRARY NAMES QtCLucene)
 find_library(QtCoreLib LIBRARY NAMES QtCore)
 find_library(QtDeclarativeLib LIBRARY NAMES QtDeclarative)
@@ -65,7 +67,6 @@ find_library(QtSvgLib LIBRARY NAMES QtSvg)
 find_library(QtTestLib LIBRARY NAMES QtTest)
 find_library(QtXmlPatternsLib LIBRARY NAMES QtXmlPatterns)
 find_library(QtXmlLib LIBRARY NAMES QtXml)
-
 
 message("Json library: ${jsonLib}")
 message("fftw3 library: ${fftw3Lib}")
@@ -119,6 +120,8 @@ include_directories(
   ${Neuroproof_minimalDir}
   )
 
+
+
 add_executable(get_skeleton myskeletonwrapper.cpp segmentation_interface.cpp get_skeleton.cpp)
 TARGET_LINK_LIBRARIES(get_skeleton 
  ${neutubeLib}  ${neuLib}  ${neuroproofLib}
@@ -132,6 +135,4 @@ TARGET_LINK_LIBRARIES(get_skeleton
   ${pngLib} ${zLib} ${dlLib} ${hdfLib} ${hdf5Lib}
   ${hdf5_hlLib} ${boost_threadLib} ${boost_systemLib} ${boost_chronoLib}
   )
-
-
 
